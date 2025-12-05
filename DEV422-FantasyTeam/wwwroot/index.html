@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy Sports Team Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        header {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #4CAF50;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        section {
+            margin-bottom: 30px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        input, select {
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .results pre {
+            background: #eee;
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Fantasy Sports Team Management</h1>
+        <p>Manage your teams, draft players, and track performance!</p>
+    </header>
+
+    <section id="team-management">
+        <h2>Team Management</h2>
+        <form id="create-team-form">
+            <label for="team-name">Create a New Team</label>
+            <input type="text" id="team-name" placeholder="Enter team name" required>
+            <button type="submit">Create Team</button>
+        </form>
+        <div class="results" id="team-results"></div>
+    </section>
+
+    <section id="player-management">
+        <h2>Player Management</h2>
+        <form id="draft-player-form">
+            <label for="player-id">Draft a Player</label>
+            <input type="number" id="player-id" placeholder="Enter player ID" required>
+            <label for="team-id">For Team ID</label>
+            <input type="number" id="team-id" placeholder="Enter team ID" required>
+            <button type="submit">Draft Player</button>
+        </form>
+        <div class="results" id="player-results"></div>
+    </section>
+
+    <section id="performance-tracking">
+        <h2>Performance Tracking</h2>
+        <button id="simulate-competition">Simulate Competition</button>
+        <div class="results" id="competition-results"></div>
+    </section>
+
+    <section id="leaderboard">
+        <h2>Leaderboard</h2>
+        <button id="view-leaderboard">View Leaderboard</button>
+        <div class="results" id="leaderboard-results"></div>
+    </section>
+
+    <script>
+        const playerServiceUrl = "https://playerservice-dev422-aahfe8ckcscybjdj.westus2-01.azurewebsites.net/api/player";
+        const teamServiceUrl = "https://teamservice-dev422-f2ckazauadbkd7g0.westus2-01.azurewebsites.net/api/teams"
+        const apiBaseUrl = "https://your-api-base-url.com"; // Replace with your deployed API URL
+
+        // Create a new team
+        document.getElementById("create-team-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const teamName = document.getElementById("team-name").value;
+
+            const response = await fetch(`${apiBaseUrl}/teams`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ teamName })
+            });
+
+            const result = await response.json();
+            document.getElementById("team-results").innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+        });
+
+        // Draft a player
+        document.getElementById("draft-player-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const playerId = document.getElementById("player-id").value;
+            const teamId = document.getElementById("team-id").value;
+
+            const response = await fetch(`${apiBaseUrl}/players/draft`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ playerId: Number(playerId), teamId: Number(teamId) })
+            });
+
+            const result = await response.json();
+            document.getElementById("player-results").innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+        });
+
+        // Simulate competition
+        document.getElementById("simulate-competition").addEventListener("click", async () => {
+            const response = await fetch(`${apiBaseUrl}/competitions/simulate`, { method: "POST" });
+            const result = await response.json();
+            document.getElementById("competition-results").innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+        });
+
+        // View leaderboard
+        document.getElementById("view-leaderboard").addEventListener("click", async () => {
+            const response = await fetch(`${apiBaseUrl}/leaderboard`);
+            const result = await response.json();
+            document.getElementById("leaderboard-results").innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+        });
+    </script>
+</body>
+</html>
