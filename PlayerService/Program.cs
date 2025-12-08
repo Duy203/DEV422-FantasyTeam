@@ -31,10 +31,14 @@ app.UseCors("AllowAll");
 app.MapControllers();
 
 // Auto create DB + tables
+/**
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<PlayerContext>();
     context.Database.Migrate();
 }
+
+*/
+
 
 app.Run();
