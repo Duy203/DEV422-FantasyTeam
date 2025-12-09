@@ -72,7 +72,11 @@ namespace DEV422_FantasyTeam.Controllers
             if (!TeamExsit) return NotFound("Team Not Found");
 
             var result = await _playerservice.DraftPlayer(playerId, teamId);
-            if (result == null) return BadRequest("Draft failed. Player might be drafted");
+            if (result == null) return BadRequest(new 
+                {
+                success =  false,
+                error = "Could Not Draft Player. Maybe Drafted"
+            });
 
             _context.TeamPlayers.Add(new TeamPlayer
             {
