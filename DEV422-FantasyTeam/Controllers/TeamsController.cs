@@ -16,11 +16,13 @@ namespace DEV422_FantasyTeam.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IPlayerService _playerservice;
+        private readonly IPerformanceService _performance;
 
-        public TeamsController(AppDbContext context, IPlayerService playerservice)
+        public TeamsController(AppDbContext context, IPlayerService playerservice, IPerformanceService performance)
         {
             _context = context;
             _playerservice = playerservice;
+            _performance = performance;
         }
 
         //Team Create
@@ -105,5 +107,27 @@ namespace DEV422_FantasyTeam.Controllers
 
             return Ok(result);
         }
+
+        // SIMULATE TEAM PERFORMANCE
+        [HttpPost("{teamId}/simulate")]
+        public async Task<IActionResult> SimulateTeam(int teamId, [FromQuery] int games = 1)
+        {
+            var team = await _context.Teams.FindAsync(teamId);
+            if (team == null)
+                return NotFound("Team not found");
+
+            var players = await _context.TeamPlayers
+                .Where(tp => tp.TeamId == teamId)
+                .Select(tp => tp.PlayerId)
+                .ToListAsync();
+
+            if (players.Count == 0)
+                return BadRequest("Team has no players.");
+
+            var result = await _performance.SimulateAsync(players, games);
+
+            return Ok(result);
+        }
+
     }
 }

@@ -16,6 +16,9 @@ builder.Services.AddSwaggerGen();
 
 // External Player Service (HTTP Client)
 builder.Services.AddHttpClient<IPlayerService, PlayerService>();
+// External Performance Service (HTTP Client)
+builder.Services.AddHttpClient<IPerformanceService, PerformanceService>();
+
 
 var app = builder.Build();
 
