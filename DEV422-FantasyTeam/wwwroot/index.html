@@ -133,6 +133,21 @@
 
             <div id="view-team-result" class="results"></div>
         </section>
+
+        <section>
+            <h2>Simulate Team Performance</h2>
+
+            <label>Team ID</label>
+            <input type="number" id="sim-team-id" placeholder="Enter team ID" />
+
+            <label>Games to Simulate</label>
+            <input type="number" id="sim-games" value="1" />
+
+            <button onclick="simulateTeam()">Simulate</button>
+
+            <div id="sim-result" class="results"></div>
+        </section>
+
     </main>
 
     <script>
@@ -207,6 +222,20 @@
 
             document.getElementById("view-team-result").innerText =
                 JSON.stringify(result, null, 2);
+        }
+
+        //simulateTeam
+
+        async function simulateTeam() {
+            const teamId = document.getElementById("sim-team-id").value;
+            const games = document.getElementById("sim-games").value;
+
+            const response = await fetch(`${teamServiceUrl}/${teamId}/simulate?games=${games}`, {
+                method: "POST"
+            });
+
+            const text = await response.text();
+            document.getElementById("sim-result").innerText = text;
         }
     </script>
 
